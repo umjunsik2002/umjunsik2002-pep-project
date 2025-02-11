@@ -45,6 +45,9 @@ public class SocialMediaController {
         // GET /messages
         app.get("/messages", this::getAllMessage);
 
+        // GET /messages/{message_id}
+        app.get("/messages/{message_id}", this::getMessageById);
+
         return app;
     }
 
@@ -66,9 +69,9 @@ public class SocialMediaController {
             }
 
             Message newMessage = objectMapper.readValue(body, Message.class);
-            Message returnedMessage = messageService.postMessage(newMessage);
-            if (returnedMessage != null) {
-                context.status(200).json(returnedMessage);
+            Message postedMessage = messageService.postMessage(newMessage);
+            if (postedMessage != null) {
+                context.status(200).json(postedMessage);
                 return;
             }
             else {
@@ -100,6 +103,22 @@ public class SocialMediaController {
     private void getAllMessage(Context context) {
         try {
             context.status(200).json(messageService.getAllMessage());
+        }
+        catch (Exception e) {
+            context.status(500);
+        }
+    }
+
+    private void getMessageById(Context context) {
+        try {
+            int messageId = Integer.parseInt(context.pathParam("message_id"));
+            Message selectedMessage = messageService.getMessageById(messageId);
+            if (selectedMessage == null) {
+                context.status(200);
+            }
+            else {
+                context.status(200).json(selectedMessage);
+            }
         }
         catch (Exception e) {
             context.status(500);
