@@ -48,6 +48,9 @@ public class SocialMediaController {
         // GET /messages/{message_id}
         app.get("/messages/{message_id}", this::getMessageById);
 
+        // PATCH /messages/{message_id}
+        app.patch("/messages/{message_id}", this::patchMessage);
+
         return app;
     }
 
@@ -118,6 +121,32 @@ public class SocialMediaController {
             }
             else {
                 context.status(200).json(selectedMessage);
+            }
+        }
+        catch (Exception e) {
+            context.status(500);
+        }
+    }
+
+    private void patchMessage(Context context) {
+        try {
+            int messageId = Integer.parseInt(context.pathParam("message_id"));
+            String body = context.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            JsonNode rootNode = objectMapper.readTree(body);
+            JsonNode messageTextNode = rootNode.get("message_text");
+            if (messageTextNode == null || messageTextNode.isNull() || messageTextNode.asText().isEmpty() || messageTextNode.asText().length() > 255) {
+                context.status(400);
+                return;
+            }
+
+            Message updatedMessage = messageService.patchMessage(messageId, messageTextNode.asText());
+            if (updatedMessage == null) {
+                context.status(400);
+            }
+            else {
+                context.status(200).json(updatedMessage);
             }
         }
         catch (Exception e) {

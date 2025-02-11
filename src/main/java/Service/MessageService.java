@@ -32,4 +32,8 @@ public class MessageService {
     public Message getMessageById(int messageId) {
         return messageDAO.getMessageById(messageId);
     }
+
+    public Message patchMessage(int messageId, String messageText) {
+        return messageDAO.patchMessage(messageId, messageText);
+    }
 }

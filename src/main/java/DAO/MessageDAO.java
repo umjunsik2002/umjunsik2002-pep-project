@@ -101,4 +101,31 @@ public class MessageDAO {
         }
         return null;
     }
+
+    public Message patchMessage(int messageId, String messageText) {
+        try (Connection connection = ConnectionUtil.getConnection()) {
+            String selectSql = "SELECT * FROM message WHERE message_id = ?";
+            PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+            selectStatement.setInt(1, messageId);
+            ResultSet rs = selectStatement.executeQuery();
+
+            if (rs.next()) {
+                int postedBy = rs.getInt("posted_by");
+                long timePostedEpoch = rs.getLong("time_posted_epoch");
+                
+                String updateSql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+                PreparedStatement updateStatement = connection.prepareStatement(updateSql);
+                updateStatement.setString(1, messageText);
+                updateStatement.setInt(2, messageId);
+                int rowsUpdated = updateStatement.executeUpdate();
+                if (rowsUpdated > 0) {
+                    return new Message(messageId, postedBy, messageText, timePostedEpoch);
+                }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
