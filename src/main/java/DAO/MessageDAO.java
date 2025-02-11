@@ -8,6 +8,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class MessageDAO {
     
     public Message postMessage(Message message) {
@@ -56,5 +59,26 @@ public class MessageDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public List<Message> getAllMessage() {
+        List<Message> messageList = new ArrayList<>();
+        try (Connection connection = ConnectionUtil.getConnection()) {
+            String selectSql = "SELECT * FROM message";
+            PreparedStatement selecStatement = connection.prepareStatement(selectSql);
+            ResultSet rs = selecStatement.executeQuery();
+
+            while (rs.next()) {
+                int messageId = rs.getInt("message_id");
+                int postedBy = rs.getInt("posted_by");
+                String messageText = rs.getString("message_text");
+                long timePostedEpoch = rs.getLong("time_posted_epoch");
+                messageList.add(new Message(messageId, postedBy, messageText, timePostedEpoch));
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return messageList;
     }
 }

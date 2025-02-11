@@ -9,6 +9,9 @@ import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should
@@ -36,6 +39,11 @@ public class SocialMediaController {
 
         // DELETE /messages/{message_id}
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
+
+        // GET /accounts/{account_id}/messages
+
+        // GET /messages
+        app.get("/messages", this::getAllMessage);
 
         return app;
     }
@@ -83,6 +91,15 @@ public class SocialMediaController {
             else {
                 context.status(200).json(deletedMessage);
             }
+        }
+        catch (Exception e) {
+            context.status(500);
+        }
+    }
+
+    private void getAllMessage(Context context) {
+        try {
+            context.status(200).json(messageService.getAllMessage());
         }
         catch (Exception e) {
             context.status(500);

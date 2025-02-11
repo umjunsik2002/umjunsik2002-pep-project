@@ -3,6 +3,9 @@ package Service;
 import DAO.MessageDAO;
 import Model.Message;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class MessageService {
     public MessageDAO messageDAO;
 
@@ -20,5 +23,9 @@ public class MessageService {
 
     public Message deleteMessage(int messageId) {
         return messageDAO.deleteMessage(messageId);
+    }
+
+    public List<Message> getAllMessage() {
+        return messageDAO.getAllMessage();
     }
 }
