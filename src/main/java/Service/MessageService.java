@@ -17,4 +17,8 @@ public class MessageService {
     public Message postMessage(Message message) {
         return messageDAO.postMessage(message);
     }
+
+    public Message deleteMessage(int messageId) {
+        return messageDAO.deleteMessage(messageId);
+    }
 }
