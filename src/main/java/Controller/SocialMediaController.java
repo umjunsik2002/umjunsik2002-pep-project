@@ -40,8 +40,6 @@ public class SocialMediaController {
         // DELETE /messages/{message_id}
         app.delete("/messages/{message_id}", this::deleteMessageHandler);
 
-        // GET /accounts/{account_id}/messages
-
         // GET /messages
         app.get("/messages", this::getAllMessage);
 
@@ -50,6 +48,8 @@ public class SocialMediaController {
 
         // PATCH /messages/{message_id}
         app.patch("/messages/{message_id}", this::patchMessage);
+
+        // GET /accounts/{account_id}/messages
 
         return app;
     }
