@@ -50,6 +50,7 @@ public class SocialMediaController {
         app.patch("/messages/{message_id}", this::patchMessage);
 
         // GET /accounts/{account_id}/messages
+        app.get("/account/{account_id}/messages", this::getMessageForAccount);
 
         return app;
     }
@@ -148,6 +149,15 @@ public class SocialMediaController {
             else {
                 context.status(200).json(updatedMessage);
             }
+        }
+        catch (Exception e) {
+            context.status(500);
+        }
+    }
+
+    private void getMessageForAccount(Context context) {
+        try {
+
         }
         catch (Exception e) {
             context.status(500);
