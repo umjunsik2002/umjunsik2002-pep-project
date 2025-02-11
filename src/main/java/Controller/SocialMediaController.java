@@ -53,6 +53,9 @@ public class SocialMediaController {
         // POST /login
         app.post("/login", this::login);
 
+        // POST /register
+        app.post("/register", this::register);
+
         return app;
     }
 
@@ -176,7 +179,7 @@ public class SocialMediaController {
             JsonNode passwordNode = rootNode.get("password");
 
             if (usernameNode == null || usernameNode.isNull() || usernameNode.asText().isEmpty() || usernameNode.asText().length() > 255 ||
-                passwordNode == null || passwordNode.isNull() || passwordNode.asText().isEmpty() || passwordNode.asText().length() > 255) {
+                passwordNode == null || passwordNode.isNull() || passwordNode.asText().isEmpty() || passwordNode.asText().length() > 255 || passwordNode.asText().length() < 4) {
                 context.status(401);
                 return;
             }
@@ -189,6 +192,36 @@ public class SocialMediaController {
             }
             else {
                 context.status(401);
+                return;
+            }
+        }
+        catch (Exception e) {
+            context.status(500);
+        }
+    }
+
+    private void register(Context context) {
+        try {
+            String body = context.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(body);
+            JsonNode usernameNode = rootNode.get("username");
+            JsonNode passwordNode = rootNode.get("password");
+
+            if (usernameNode == null || usernameNode.isNull() || usernameNode.asText().isEmpty() || usernameNode.asText().length() > 255 ||
+                passwordNode == null || passwordNode.isNull() || passwordNode.asText().isEmpty() || passwordNode.asText().length() > 255 || passwordNode.asText().length() < 4) {
+                context.status(400);
+                return;
+            }
+
+            Account newAccount = objectMapper.readValue(body, Account.class);
+            Account postedAccount = accountService.register(newAccount);
+            if (postedAccount != null) {
+                context.status(200).json(postedAccount);
+                return;
+            }
+            else {
+                context.status(400);
                 return;
             }
         }

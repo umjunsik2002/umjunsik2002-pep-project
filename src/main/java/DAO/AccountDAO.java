@@ -10,9 +10,6 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 
 import java.util.List;
-
-import org.h2.command.Prepared;
-
 import java.util.ArrayList;
 
 public class AccountDAO {
@@ -52,6 +49,36 @@ public class AccountDAO {
                 String username = rs.getString("username");
                 String password = rs.getString("password");
                 return new Account(accountId, username, password);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Account register(Account account) {
+        try (Connection connection = ConnectionUtil.getConnection()) {
+            String selectSql = "SELECT * FROM account WHERE username = ?";
+            PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+            selectStatement.setString(1, account.getUsername());
+            ResultSet rsSelect = selectStatement.executeQuery();
+            if (rsSelect.next()) {
+                return null;
+            }
+
+            String insertSql = "INSERT INTO account (username, password) VALUES (?, ?)";
+            PreparedStatement insertStatement = connection.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS);
+            insertStatement.setString(1, account.getUsername());
+            insertStatement.setString(2, account.getPassword());
+
+            int rowsAffected = insertStatement.executeUpdate();
+            if (rowsAffected > 0) {
+                ResultSet rsInsert = insertStatement.getGeneratedKeys();
+                if (rsInsert.next()) {
+                    int accountId = rsInsert.getInt(1);
+                    return new Account(accountId, account.getUsername(), account.getPassword());
+                }
             }
         }
         catch (SQLException e) {
