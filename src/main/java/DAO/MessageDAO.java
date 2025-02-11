@@ -65,8 +65,8 @@ public class MessageDAO {
         List<Message> messageList = new ArrayList<>();
         try (Connection connection = ConnectionUtil.getConnection()) {
             String selectSql = "SELECT * FROM message";
-            PreparedStatement selecStatement = connection.prepareStatement(selectSql);
-            ResultSet rs = selecStatement.executeQuery();
+            PreparedStatement selectStatement = connection.prepareStatement(selectSql);
+            ResultSet rs = selectStatement.executeQuery();
 
             while (rs.next()) {
                 int messageId = rs.getInt("message_id");

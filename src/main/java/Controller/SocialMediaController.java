@@ -5,12 +5,10 @@ import io.javalin.http.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import Model.Account;
 import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
-
-import java.util.List;
-import java.util.ArrayList;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -50,7 +48,10 @@ public class SocialMediaController {
         app.patch("/messages/{message_id}", this::patchMessage);
 
         // GET /accounts/{account_id}/messages
-        app.get("/account/{account_id}/messages", this::getMessageForAccount);
+        app.get("/accounts/{account_id}/messages", this::getMessageForAccount);
+
+        // POST /login
+        app.post("/login", this::login);
 
         return app;
     }
@@ -157,7 +158,39 @@ public class SocialMediaController {
 
     private void getMessageForAccount(Context context) {
         try {
+            int accountId = Integer.parseInt(context.pathParam("account_id"));
+            context.status(200).json(accountService.getMessageForAccount(accountId));
+            
+        }
+        catch (Exception e) {
+            context.status(500);
+        }
+    }
 
+    private void login(Context context) {
+        try {
+            String body = context.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(body);
+            JsonNode usernameNode = rootNode.get("username");
+            JsonNode passwordNode = rootNode.get("password");
+
+            if (usernameNode == null || usernameNode.isNull() || usernameNode.asText().isEmpty() || usernameNode.asText().length() > 255 ||
+                passwordNode == null || passwordNode.isNull() || passwordNode.asText().isEmpty() || passwordNode.asText().length() > 255) {
+                context.status(401);
+                return;
+            }
+
+            Account newAccount = objectMapper.readValue(body, Account.class);
+            Account postedAccount = accountService.login(newAccount);
+            if (postedAccount != null) {
+                context.status(200).json(postedAccount);
+                return;
+            }
+            else {
+                context.status(401);
+                return;
+            }
         }
         catch (Exception e) {
             context.status(500);

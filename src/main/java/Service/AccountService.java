@@ -2,6 +2,9 @@ package Service;
 
 import DAO.AccountDAO;
 import Model.Account;
+import Model.Message;
+
+import java.util.List;
 
 public class AccountService {
     public AccountDAO accountDAO;
@@ -12,5 +15,13 @@ public class AccountService {
 
     public AccountService(AccountDAO accountDAO){
         this.accountDAO = accountDAO;
+    }
+
+    public List<Message> getMessageForAccount(int accountId) {
+        return accountDAO.getMessageForAccount(accountId);
+    }
+
+    public Account login(Account account) {
+        return accountDAO.login(account);
     }
 }
