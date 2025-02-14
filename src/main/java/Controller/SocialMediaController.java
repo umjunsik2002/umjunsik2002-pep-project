@@ -33,10 +33,10 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
 
         // POST /messages
-        app.post("/messages", this::postMessageHandler);
+        app.post("/messages", this::postMessage);
 
         // DELETE /messages/{message_id}
-        app.delete("/messages/{message_id}", this::deleteMessageHandler);
+        app.delete("/messages/{message_id}", this::deleteMessage);
 
         // GET /messages
         app.get("/messages", this::getAllMessage);
@@ -59,7 +59,7 @@ public class SocialMediaController {
         return app;
     }
 
-    private void postMessageHandler(Context context) {
+    private void postMessage(Context context) {
         try {
             String body = context.body();
             ObjectMapper objectMapper = new ObjectMapper();
@@ -92,7 +92,7 @@ public class SocialMediaController {
         }
     }
 
-    private void deleteMessageHandler(Context context) {
+    private void deleteMessage(Context context) {
         try {
             int messageId = Integer.parseInt(context.pathParam("message_id"));
             Message deletedMessage = messageService.deleteMessage(messageId);
